@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沈万三分店信息</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 100%;
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+        
+        /* 顶部标题和搜索栏 */
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #c00, #a00);
+            color: white;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 12px rgba(192, 0, 0, 0.2);
+        }
+        
+        .header h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .search-bar {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .search-box {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 25px;
+            padding: 10px 15px;
+            align-items: center;
+        }
+        
+        .search-box i {
+            color: #666;
+            margin-right: 10px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        /* 分店卡片样式 */
+        .store-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #c00;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .store-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .store-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #c00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .store-name i {
+            margin-right: 8px;
+        }
+        
+        .store-info {
+            margin-bottom: 12px;
+            color: #555;
+        }
+        
+        .store-address, .store-phone {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .store-address i, .store-phone i {
+            margin-right: 10px;
+            color: #c00;
+            width: 16px;
+            text-align: center;
+            margin-top: 2px;
+        }
+        
+        .store-actions {
+            display: flex;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 14px;
+            text-decoration: none;
+            flex: 1;
+            transition: all 0.3s;
+        }
+        
+        .btn-map {
+            background: #f0f0f0;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .btn-map:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        
+        /* 底部客服信息 */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 14px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        .footer a {
+            color: #c00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        /* 无搜索结果提示 */
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            display: none;
+        }
+        
+        .no-results i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(192, 0, 0, 0.1);
+            border-left-color: #c00;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题 -->
+    <div class="header">
+        <h1><i class="fas fa-store"></i> 沈万三分店信息</h1>
+        <p>全国10家分店，为您提供优质服务</p>
+    </div>
+    
+    <div class="container">
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="搜索分店名称或地址...">
+            </div>
+        </div>
+        
+        <!-- 分店列表 -->
+        <div id="store-list">
+            <!-- 分店信息将通过JavaScript动态生成 -->
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>正在加载分店信息...</p>
+            </div>
+        </div>
+        
+        <!-- 无搜索结果提示 -->
+        <div class="no-results" id="no-results">
+            <i class="fas fa-search"></i>
+            <h3>未找到匹配的分店信息</h3>
+            <p>请尝试使用其他关键词搜索</p>
+        </div>
+    </div>
+    
+    <!-- 底部客服信息 -->
+    <div class="footer">
+        如有疑问，请拨打客服电话：<a href="tel:17761947096">17761947096</a>
+    </div>
+
+    <script>
+        // 分店数据
+        const stores = [
+            {
+                name: "沈万三·江南卤味（平江路店）",
+                address: "苏州姑苏区平江路162号沈万三（蒹葭巷对面）",
+                phone: "18962167072",
+                mapKeyword: "苏州姑苏区平江路162号沈万三"
+            },
+            {
+                name: "沈万三·江南卤味（观前街店）",
+                address: "苏州姑苏区观前街77号沈万三",
+                phone: "18921985726",
+                mapKeyword: "苏州姑苏区观前街77号沈万三"
+            },
+            {
+                name: "沈万三·江南卤味（山塘街1店）",
+                address: "苏州姑苏区山塘街58号（海市山塘对面）",
+                phone: "18913158996",
+                mapKeyword: "苏州姑苏区山塘街58号"
+            },
+            {
+                name: "沈万三·江南卤味（山塘街2店）",
+                address: "苏州姑苏区山塘街345号",
+                phone: "18913518036",
+                mapKeyword: "苏州姑苏区山塘街345号"
+            },
+            {
+                name: "沈万三·江南卤味（寒山寺店）",
+                address: "苏州姑苏区寒山别院东外19号",
+                phone: "18013527595",
+                mapKeyword: "苏州姑苏区寒山别院东外19号"
+            },
+            {
+                name: "沈万三·江南卤味（惠山古镇）",
+                address: "无锡梁溪区惠山古镇地铁站6号口步行430米",
+                phone: "13328150257",
+                mapKeyword: "无锡梁溪区惠山古镇"
+            },
+            {
+                name: "沈万三·江南卤味（东关街）",
+                address: "扬州广陵区东关街道东关街302号东关街美食广场1-1-1",
+                phone: "19951802521",
+                mapKeyword: "扬州广陵区东关街302号"
+            },
+            {
+                name: "平望官酱园",
+                address: "苏州姑苏区观前街73号",
+                phone: "17715353048",
+                mapKeyword: "苏州姑苏区观前街73号平望官酱园"
+            },
+            {
+                name: "稻香村（平江路店）",
+                address: "苏州姑苏区平江路66号",
+                phone: "18015558100",
+                mapKeyword: "苏州姑苏区平江路66号稻香村"
+            },
+            {
+                name: "稻香村（山塘街店）",
+                address: "苏州姑苏区山塘街381-1号",
+                phone: "13196607871",
+                mapKeyword: "苏州姑苏区山塘街381-1号稻香村"
+            }
+        ];
+
+        // 初始化分店列表
+        function renderStores(storeList) {
+            const storeListContainer = document.getElementById('store-list');
+            const noResults = document.getElementById('no-results');
+            
+            // 清空容器
+            storeListContainer.innerHTML = '';
+            
+            if (storeList.length === 0) {
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            
+            // 创建分店卡片
+            storeList.forEach(store => {
+                const storeCard = document.createElement('div');
+                storeCard.className = 'store-card';
+                
+                storeCard.innerHTML = `
+                    <div class="store-name">
+                        <i class="fas fa-map-marker-alt"></i>
+                        ${store.name}
+                    </div>
+                    <div class="store-info">
+                        <div class="store-address">
+                            <i class="fas fa-location-dot"></i>
+                            <span>${store.address}</span>
+                        </div>
+                        <div class="store-phone">
+                            <i class="fas fa-phone"></i>
+                            <span>${store.phone}</span>
+                        </div>
+                    </div>
+                    <div class="store-actions">
+                        <a href="https://uri.amap.com/search?keyword=${encodeURIComponent(store.mapKeyword)}" target="_blank" class="btn btn-map">
+                            <i class="fas fa-map"></i> 地图指引
+                        </a>
+                    </div>
+                `;
+                
+                storeListContainer.appendChild(storeCard);
+            });
+        }
+
+        // 搜索功能
+        function searchStores() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                renderStores(stores);
+                return;
+            }
+            
+            const filteredStores = stores.filter(store => {
+                return store.name.toLowerCase().includes(searchTerm) || 
+                       store.address.toLowerCase().includes(searchTerm);
+            });
+            
+            renderStores(filteredStores);
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 模拟加载延迟
+            setTimeout(() => {
+                renderStores(stores);
+            }, 800);
+            
+            // 输入框输入时实时搜索
+            document.getElementById('search-input').addEventListener('input', searchStores);
+            
+            // 输入框回车搜索
+            document.getElementById('search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchStores();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
